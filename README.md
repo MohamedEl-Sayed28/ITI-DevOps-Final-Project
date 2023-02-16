@@ -4,7 +4,7 @@
 
 ## Tools
 - Terraform
-- Google Cloud Platform (GCP)
+- Amazon Web Services (AWS)
 - Jenkins
 
 ## First
