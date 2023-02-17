@@ -37,7 +37,7 @@ Dockerhub jenkins image repository: https://hub.docker.com/repository/docker/moh
 
 ## connect to eks cluster
 ```bash
-aws eks --region us-west-1 update-kubeconfig --name eks --profile default
+aws eks --region us-west-1 update-kubeconfig --name ITI-Final_Project-cluster --profile default
 ```
 ![image](https://user-images.githubusercontent.com/101838529/219521365-11f7a49e-a36a-44fe-9bef-88f261aa5ec6.png)
 
