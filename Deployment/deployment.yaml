@@ -2,73 +2,84 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jenkins
-  namespace: jenkins
+  labels:
+    app: jenkins
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: jenkins
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
         app: jenkins
     spec:
+      serviceAccountName: jenkins
       containers:
-        - name: jenkins
-          image: mohamedmahmoud94/myjenkins:V2
-
-          ports:
-            - name: jenkins-port
-              containerPort: 8080
-            - name: unknown-port
-              containerPort: 50000
-
-          volumeMounts:
-            - name: jenkins
-              mountPath: /var/jenkins_home
-            
-            - name: kubernetes
-              mountPath: /usr/bin/kubectl
-              subPath: kubectl
-            
-            - name: docker
-              mountPath: /usr/bin/docker
-              subPath: docker
-            
-            - name: dockersock
-              mountPath: /var/run/docker.sock
-      
-       initContainers:
-         - name: init-docker
-           image: docker
-           command: ["cp","/usr/local/bin/docker", "/opt/temp"]    
-            
-           volumeMounts:  
-             - name: docker
-               mountPath: /opt/temp
- 
-         - name: init-k8s
-           image: alpine/k8s:1.23.13
-           command: ["cp","/usr/bin/kubectl", "/opt/temp"]
-
-           volumeMounts:
-             - name: kubernetes
-               mountPath: "/opt/temp"
-        
-      volumes:
-        - name: jenkins
-          persistentVolumeClaim:
-            claimName: jenkins-claim
-
-        - name: kubernetes
-          emptyDir: {}
+      - name: jenkins
+        image: mohamedmahmoud94/myjenkins:v2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: JAVA_OPTS
+          value: -Xmx2048m -Dhudson.slaves.NodeProvisioner.MARGIN=50 -Dhudson.slaves.NodeProvisioner.MARGIN0=0.85
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 50000
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: jenkins
+        - name: dockersock
+          mountPath: /var/run/docker.sock
 
         - name: docker
-           emptyDir: {}
-        
-        - name: dockersock
-          hostPath:
-            path: /var/run/docker.sock
+          mountPath: /usr/bin/docker
+          subPath: docker
+
+        - name: kubernetes
+          mountPath: /usr/bin/kubectl
+          subPath: kubectl
+      initContainers:
+        - name: init-docker
+          image: docker
+          command: ["cp","/usr/local/bin/docker", "/opt/tmp"]
+       
+            
+          volumeMounts:  
+            - name: docker
+              mountPath: /opt/tmp
+
+        - name: init-k8s
+          image: alpine/k8s:1.23.13
+          command: ["cp","/usr/bin/kubectl","/opt/temp"]
+
+          volumeMounts:
+            - name: kubernetes
+              mountPath: "/opt/temp"
+
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 0
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: jenkins
+        persistentVolumeClaim:
+          claimName: jenkins-claim
+      - name: docker
+        emptyDir: {}
+
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
+
+      - name: kubernetes
+        emptyDir: {}
 
 ---
 
@@ -76,11 +87,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jenkins
-  namespace: jenkins
 spec:
   type: LoadBalancer
   ports:
-    - port: 8080
+    - name: ui
+      port: 8080
       targetPort: 8080
       protocol: TCP
     - name: http
