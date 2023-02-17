@@ -166,7 +166,7 @@ http://aec83d4e1b34948d683c82d1cb4f8ea0-897536538.us-west-1.elb.amazonaws.com/
 
 
 ## Webapp exposed externaly
-a05ece7179c4a49989411339242ccba4-162093534.us-west-1.elb.amazonaws.com
+http://a05ece7179c4a49989411339242ccba4-162093534.us-west-1.elb.amazonaws.com
 
 ![image](https://user-images.githubusercontent.com/101838529/219554329-23ca96da-16a1-4e9e-b09e-7d0de8fdacd8.png)
 
