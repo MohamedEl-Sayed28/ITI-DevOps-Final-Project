@@ -20,6 +20,7 @@ terraform apply #to apply infrastructure on aws cloud provider
 ```
 
 ## Build jenkins image
+https://github.com/MohamedEl-Sayed28/ITI-DevOps-Final-Project/blob/main/Deployment/jenkins_with_docker
 
 Build image for jenkins using Dockerfile by
 
