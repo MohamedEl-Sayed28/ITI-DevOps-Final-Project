@@ -44,7 +44,7 @@ aws eks --region us-west-1 update-kubeconfig --name ITI-Final_Project-cluster --
 
 ## Setup a Cloud Storage to use it 
 ```bash
-# deploy EFS storage driver
+# deploy EFS ( Elastic File System ) storage driver
 kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
 
 # get VPC ID
